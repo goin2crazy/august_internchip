@@ -1,0 +1,9 @@
+transformers 
+datasets==2.18.0
+peft 
+sentence-transformers
+
+ast 
+json 
+
+fastapi 
