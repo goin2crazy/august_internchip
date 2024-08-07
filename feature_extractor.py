@@ -19,52 +19,22 @@ class FeatureExtractor():
     items_ = [i if i.endswith('}') else i+'}'  for i in items_]
 
 
-    items = list() 
-    for item in items_: 
+    items = list()
+    for item in items_:
 
-      try: 
-        v = ast.literal_eval(item) 
+      try:
+        v = ast.literal_eval(item)
         v = items.append(v)
-      except Exception as e: 
+      except Exception as e:
         print (e)
 
     return {k: [item[k] for item in items if item[k] != ['N/A']][:2] if len([item[k] for item in items if item[k] != ['N/A']]) else "None" for k in items[0].keys()}
 
-  @staticmethod
-  def find_checkpoint_folders(base_dir):
-    """
-    Finds all folders starting with 'checkpoint' within a given directory and its subdirectories.
-
-    Args:
-      base_dir: The root directory to search in.
-
-    Returns:
-      A list of paths to the found checkpoint folders.
-    """
-
-    checkpoint_folders = []
-    for root, dirs, files in os.walk(base_dir):
-      for dir_name in dirs:
-        if dir_name.startswith('checkpoint'):
-          checkpoint_folders.append(os.path.join(root, dir_name))
-    return checkpoint_folders
-
-  def __init__(self):
-
-    base_dir = cfg.model_exct_path
-    # Example usage
-    base_dir = base_dir
-    checkpoint_paths = self.find_checkpoint_folders(base_dir)
-
-    if checkpoint_paths:
-      print("Found checkpoint folders:")
-      for path in checkpoint_paths:
-        print(path)
-    else:
-      print("No checkpoint folders found.")
+  def __init__(self, model_path = 'doublecringe123/lora_job_features_extractor_flant5_v2', revision = '00e8801ca3d4314a1d2cb0be101440ce738dd129'):
 
 
-    config = PeftConfig.from_pretrained(checkpoint_paths[-1])
+    config = PeftConfig.from_pretrained(model_path, revision=revision)
+    
     self.config = config
 
     self.base_model = AutoModelForSeq2SeqLM.from_pretrained(
@@ -75,7 +45,9 @@ class FeatureExtractor():
     self.tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
     self.lora_model = PeftModel.from_pretrained(
         self.base_model,
-        checkpoint_paths[-1],
+        model_path,
+        revision=revision,
+        torch_dtype=torch.float16, 
         is_trainable=False,
         device_map='auto',
     )
@@ -83,7 +55,7 @@ class FeatureExtractor():
         max_length =cfg.max_length,
           do_sample=True,
           top_k=80,
-          num_return_sequences=cfg.n_sent,
+          num_return_sequences=5,
           temperature=0.8,
           eos_token_id=self.tokenizer.eos_token_id,)
 
@@ -93,7 +65,7 @@ class FeatureExtractor():
   def call_single(self, text):
     with torch.inference_mode():
       inputs = self.tokenizer(
-          text,
+          "summarize: " + text,
           return_tensors='pt',
       )
       outputs = self.lora_model.generate(
@@ -121,10 +93,10 @@ class FeatureExtractor():
   def __call__(self, text_or_batch, sorting_embeddings_model = None):
     outputs = self.call_single(text_or_batch) if isinstance(text_or_batch, str) else self.call_batch(text_or_batch)
 
-    if sorting_embeddings_model != None: 
-      
+    if sorting_embeddings_model != None:
+
       outputs_values = str(outputs).replace('[', '').replace(']', '').replace('"', '')
       output_embeddings = sorting_embeddings_model(outputs_values)
       return outputs, output_embeddings
-    else: 
+    else:
       return outputs

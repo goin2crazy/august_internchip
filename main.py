@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import numpy as np 
 
+import config as cfg
 from feature_extractor import FeatureExtractor
 from sorter_model import SortingModel
 
@@ -9,7 +11,7 @@ from typing import Dict, List, Union
 app = FastAPI()
 
 # Initialize the feature extractor and sorting model
-feat = FeatureExtractor()
+feat = FeatureExtractor(model_path=cfg.model_feat_path, revision=cfg.model_feat_versions)
 sort = SortingModel()
 
 class TextInput(BaseModel):
@@ -35,19 +37,19 @@ async def extract_embeddings_of_features(input: TextInput):
 @app.post("/extract_features_and_embeddings")
 async def extract_features_and_embeddings(input: TextInput):
     features, embeddings = feat(input.text, sort)
-    return {"features": features, "embeddings": embeddings}
+    return {"features": features, "embeddings": embeddings.tolist()}
 
 # Endpoint to extract embeddings directly from text
 @app.post("/extract_embeddings")
 async def extract_embeddings(input: TextInput):
     embeddings = sort(input.text)
-    return {"embeddings": embeddings}
+    return {"embeddings": embeddings.tolist()}
 
 # Endpoint to compare two embeddings
 @app.post("/compare_embeddings")
 async def compare_embeddings(input: EmbeddingsInput):
     score = sort.compare_embeddings(input.embedding1, input.embedding2)
-    return {"score": score}
+    return {"score": score.tolist()}
 
 # Run the application
 if __name__ == '__main__':
