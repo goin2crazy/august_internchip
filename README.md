@@ -5,7 +5,8 @@
 in config.py please change feature_extraction (parameter name: model_feat_versions) model version u like 
 
 ```python
-# 00e8801ca3d4314a1d2cb0be101440ce738dd129 - mini model with prompt (Defautl, recommended for CPU)
+# f2df1d0b06bce3ac1a7ecf7d9408737efb416118 - mini model, no prompt (Default)
+# 00e8801ca3d4314a1d2cb0be101440ce738dd129 - mini model with prompt 
 # f67bc736ef24991e646c96b6993c4d44f2d12078 - base model with prompt
 # dfcb75554b01fce5ab2360ed9c5d3e6cf49ca12a - base model, no prompt
 ```
