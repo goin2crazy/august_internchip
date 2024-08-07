@@ -65,7 +65,7 @@ class FeatureExtractor():
   def call_single(self, text):
     with torch.inference_mode():
       inputs = self.tokenizer(
-          "summarize: " + text,
+          text,
           return_tensors='pt',
       )
       outputs = self.lora_model.generate(
