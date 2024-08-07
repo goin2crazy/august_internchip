@@ -31,7 +31,7 @@ async def extract_features(input: TextInput):
 @app.post("/extract_embeddings_of_features")
 async def extract_embeddings_of_features(input: TextInput):
     _, embeddings = feat(input.text, sort)
-    return {"embeddings": embeddings}
+    return {"embeddings": embeddings.tolist()}
 
 # Endpoint to extract both features and embeddings from text
 @app.post("/extract_features_and_embeddings")
@@ -48,7 +48,9 @@ async def extract_embeddings(input: TextInput):
 # Endpoint to compare two embeddings
 @app.post("/compare_embeddings")
 async def compare_embeddings(input: EmbeddingsInput):
-    score = sort.compare_embeddings(input.embedding1, input.embedding2)
+    embedding1 = np.array(input.embedding1)
+    embedding2 = np.array(input.embedding2) 
+    score = sort.compare_embeddings(embedding1, embedding2)
     return {"score": score.tolist()}
 
 # Run the application
