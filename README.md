@@ -1,4 +1,5 @@
-## (RECOMENDED: Change the max_length = 150, n_sent = 1 to  max_length = 768, n_sent = 5 for more generation accuracy) 
+### (RECOMENDED: Change the max_length = 150, n_sent = 1 to  max_length = 768, n_sent = 5 for more generation accuracy) 
+### (RECOMENDED): Look or try models example usage in colab notebook in file "Train TextGen model to exract resumes: Example Usage.ipynb" 
 
 # Model Version 
 
