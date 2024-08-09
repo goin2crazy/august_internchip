@@ -1,5 +1,5 @@
-max_length = 150
-n_sent = 3
+max_length = 768
+n_sent = 5
 
 sentence_sorting_model_preset = 'sentence-transformers/all-MiniLM-L6-v2'
 model_exct_path= '.'

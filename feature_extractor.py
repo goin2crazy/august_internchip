@@ -10,7 +10,6 @@ import torch
 
 import ast
 import json
-
 class FeatureExtractor():
 
   @staticmethod
@@ -27,6 +26,10 @@ class FeatureExtractor():
         v = items.append(v)
       except Exception as e:
         print (e)
+
+    # fix the keys names 
+    correct_keys = ['Core Responsibilities', 'Required Skills', 'Educational Requirements', 'Experience Level', 'Preferred Qualifications', 'Compensation and Benefits']
+    items = [{correct_k: v for correct_k, (k, v) in zip(correct_keys, output.items())} for output in items]
 
     return {k: [item[k] for item in items if item[k] != ['N/A']][:2] if len([item[k] for item in items if item[k] != ['N/A']]) else "None" for k in items[0].keys()}
 
@@ -54,7 +57,7 @@ class FeatureExtractor():
     self.text_gen_config = dict(
         max_length =cfg.max_length,
           do_sample=True,
-          top_k=80,
+          top_k=70,
           num_return_sequences=5,
           temperature=0.8,
           eos_token_id=self.tokenizer.eos_token_id,)
@@ -100,3 +103,4 @@ class FeatureExtractor():
       return outputs, output_embeddings
     else:
       return outputs
+
