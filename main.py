@@ -47,11 +47,10 @@ async def extract_embeddings(input: TextInput):
 
 # Endpoint to compare two embeddings
 @app.post("/compare_embeddings")
-async def compare_embeddings(input: EmbeddingsInput):
-    embedding1 = np.array(input.embedding1)
-    embedding2 = np.array(input.embedding2) 
-    score = sort.compare_embeddings(embedding1, embedding2)
-    return {"score": score.tolist()}
+def compare_embeddings(self, embedding1, embedding2):
+    # Compute cosine-similarities
+    cosine_scores = util.cos_sim(embedding1, embedding2)
+    return cosine_scores.numpy().squeeze()
 
 # Run the application
 if __name__ == '__main__':
