@@ -11,7 +11,7 @@ All Dataset Process i did in google colab, there is saved notebooks of this proc
 - file "hh_web_scrapping.ipynb" - Web scrabbing process 
 - file "replacing the compamy names.ipynb" - Using NER model for recognize and then remove company names from dataset describtion column values process
 
-(Dataset is loaded to hugging face hub)[https://huggingface.co/datasets/doublecringe123/parsed-vacancies-from-headhunter-tashkent]
+[Dataset is loaded to hugging face hub](https://huggingface.co/datasets/doublecringe123/parsed-vacancies-from-headhunter-tashkent)
 
 ## New Model
 
