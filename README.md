@@ -17,12 +17,12 @@ All Dataset Process i did in google colab, there is saved notebooks of this proc
 
 - file "jobs_writer_usage.ipynb" There u can try model, play with generation config and evaluate ;) 
 
-I trained model on my own parsed dataset, finetuning the 'cometrain/neurotitle-rugpt3-small' as base model, in my (kaggle notebook)[https://www.kaggle.com/code/yannchikk/solution-for-my-summer-internship?scriptVersionId=191968661]
+I trained model on my own parsed dataset, finetuning the 'cometrain/neurotitle-rugpt3-small' as base model, in my [kaggle notebook](https://www.kaggle.com/code/yannchikk/solution-for-my-summer-internship?scriptVersionId=191968661)
 
-Then when i got bad results, i trained model again, but augmented my data, making it size 4 times bigger, until i was (satisfied with results)[https://www.kaggle.com/code/yannchikk/solution-for-my-summer-internship?scriptVersionId=192142602]
+Then when i got bad results, i trained model again, but augmented my data, making it size 4 times bigger, until i was [satisfied with results](https://www.kaggle.com/code/yannchikk/solution-for-my-summer-internship?scriptVersionId=192142602)
 
 
-all model versions saved to my (hugging face hub models)[https://huggingface.co/doublecringe123/job-describtion-copilot-ru/]
+all model versions saved to my [hugging face hub models](https://huggingface.co/doublecringe123/job-describtion-copilot-ru/)
 
 ### Software
 
