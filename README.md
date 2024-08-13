@@ -1,4 +1,44 @@
-# Branch "Comfort+"
+# Gemini API for features extraction and vacancy writing 
+
+Using all my skill in prompting and other stuff i added the Gemini API Usage into folder remote_api_models. There also is the python-baseline.ipynb file where i had tested and runned this code. 
+
+There are new functions in main.py the 
+
+```
+@app.post("/call_gemini")
+async def gemini(input: TextInput)
+
+@app.post("/extract_features_with_gemini")
+async def extract_features_gemini(input: TextInput) 
+
+@app.post("/call_gemini_write_vacancy/")
+async def call_model_gemini(request: InferenceRequest)
+```
+
+- call_gemini - just request the text input to gemini API 
+
+
+- extract_features_with_gemini - the same as local model for vacancy extracting 
+
+
+- call_gemini_write_vacancy - the same as Local Vacancy writer model but Main Difference is that **it writes full text of vacancy instead of just giving hints**
+
+## Import Gemini API to enviroment
+
+[Generate own Gemini API key](https://aistudio.google.com/app/apikey)
+*If you use free version of Gemini you should probably update the Key sometimes*
+
+**Please set the 'GEMINI_API_KEY' in enviroment with command**
+
+```Linux Ubuntu Terminal 
+export "GEMINI_API_KEY"="YOUR GEMINI API KEY"
+```
+
+```Windows cmd 
+set "GEMINI_API_KEY"="YOUR GEMINI API KEY"
+```
+
+# Local Vacancy writer model 
 
 There i added the inference to model i trained for helping HRs writing vacancy text by other vacancy features like 'title', 'salary' and etc. 
 
