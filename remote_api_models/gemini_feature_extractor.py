@@ -1,5 +1,5 @@
 import json
-from gemini_inference import GeminiInference
+from .gemini_inference import GeminiInference
 
 class GeminiForFeatureExtraction(GeminiInference): 
   def __init__(self, ):

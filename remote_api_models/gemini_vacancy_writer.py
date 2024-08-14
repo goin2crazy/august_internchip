@@ -1,4 +1,4 @@
-from gemini_inference import GeminiInference
+from .gemini_inference import GeminiInference
 
 class GeminiForVacancyGeneration(GeminiInference): 
   def __init__(self, ):
