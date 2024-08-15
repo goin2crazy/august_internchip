@@ -26,12 +26,6 @@ from typing import Dict, List, Union, Any
 
 app = FastAPI()
 
-# Generative model ------------------------
-
-# Local trained 
-feat = FeatureExtractor(model_path=cfg.model_feat_path, revision=cfg.model_feat_versions)
-model = VacancyWriterModel()
-
 # Functional by Gemini API 
 gemini = GeminiInference() 
 feat_gemini = GeminiForFeatureExtraction() 
@@ -40,6 +34,20 @@ model_gemini = GeminiForVacancyGeneration()
 # for extracting embedding-----------------
 sort = SortingModel()
 
+# Global variables to manage the state of models
+feat = None
+model = None
+
+@app.post("/start_local_models")
+async def start_local_models():
+    global feat, model
+    feat = FeatureExtractor(model_path=cfg.model_feat_path, revision=cfg.model_feat_versions)
+    model = VacancyWriterModel()
+    return {"message": "Local models loaded successfully."}
+
+def check_models_loaded():
+    if feat is None or model is None:
+        raise HTTPException(status_code=400, detail="Models are not loaded. Please load the models using /start_local_models endpoint.")
 
 class TextInput(BaseModel):
     text: str
@@ -47,25 +55,21 @@ class TextInput(BaseModel):
 # Endpoint to extract features from text
 @app.post("/extract_features")
 async def extract_features(input: TextInput):
+    check_models_loaded()
     features = feat(input.text)
     return features
 
-# Endpoint to extract features from text
+# Endpoint to extract features from text using Gemini
 @app.post("/extract_features_with_gemini")
 async def extract_features_gemini(input: TextInput):
     features = feat_gemini(input.text)
     return features
 
-# ----------------------------------------------------------
-
-# Endpoint to extract features from text
+# Endpoint to call Gemini model
 @app.post("/call_gemini")
 async def gemini(input: TextInput):
     model_output = gemini(input.text)
     return model_output
-
-# -----------------------------------------------------------------------------------------
-# Initialize the model instance
 
 class JobFeatures(BaseModel):
     title: str
@@ -84,6 +88,7 @@ class ForwardRequest(InferenceRequest):
 
 @app.post("/call_local_model_write_vacancy/")
 async def call_model(request: InferenceRequest):
+    check_models_loaded()
     try:
         job_features = request.job_features.dict()
         input_text = request.input_text
@@ -103,6 +108,7 @@ async def call_model_gemini(request: InferenceRequest):
 
 @app.post("/forward_local_model_write_vacancy/")
 async def forward_model(request: ForwardRequest):
+    check_models_loaded()
     try:
         job_features = request.job_features.dict()
         input_text = request.input_text
@@ -112,38 +118,31 @@ async def forward_model(request: ForwardRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# ----------------------------------------------------------------------------------------
-# Endpoint to ex
-# tract embeddings of features from text
-
 class EmbeddingsInput(BaseModel):
     embedding1: List[float]
     embedding2: List[float]
 
 @app.post("/extract_embeddings_of_features")
 async def extract_embeddings_of_features(input: TextInput):
+    check_models_loaded()
     _, embeddings = feat(input.text, sort)
     return {"embeddings": embeddings.tolist()}
 
-# Endpoint to extract both features and embeddings from text
 @app.post("/extract_features_and_embeddings")
 async def extract_features_and_embeddings(input: TextInput):
+    check_models_loaded()
     features, embeddings = feat(input.text, sort)
     return {"features": features, "embeddings": embeddings.tolist()}
 
-# Endpoint to extract embeddings directly from text
 @app.post("/extract_embeddings")
 async def extract_embeddings(input: TextInput):
     embeddings = sort(input.text)
     return {"embeddings": embeddings.tolist()}
 
-# Endpoint to compare two embeddings
 @app.post("/compare_embeddings")
-def compare_embeddings(self, embedding1, embedding2):
-    # Compute cosine-similarities
-    cosine_scores = util.cos_sim(embedding1, embedding2)
+async def compare_embeddings(input: EmbeddingsInput):
+    cosine_scores = util.cos_sim(input.embedding1, input.embedding2)
     return cosine_scores.numpy().squeeze()
-
 
 # Run the application
 if __name__ == '__main__':
