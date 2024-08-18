@@ -83,11 +83,11 @@ def build_data(df, *args, **kwargs):
     val_ds = build_dataset_all(val_df, *args, **kwargs)
     return train_ds, val_ds
     
-def run_train(model:torch.Module, 
+def run_train(model:torch.nn.Module, 
               tokenizer: AutoTokenizer, 
               ds_train: datasets.Dataset, 
               ds_val: datasets.Dataset, 
-              **kwargs) -> torch.Module: 
+              **kwargs) -> torch.nn.Module: 
     """
 
     Arguments: 
@@ -151,7 +151,7 @@ def train(
     validation_split=  True, 
     block_size = 256, 
     **training_args_, 
-) -> torch.Module: 
+) -> torch.nn.Module: 
     """
     Arguments: 
 
