@@ -1,5 +1,5 @@
 import argparse
-from .train_process import train
+from texts_writer import train
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train a model with specified parameters.")

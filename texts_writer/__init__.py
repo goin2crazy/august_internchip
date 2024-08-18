@@ -6,4 +6,3 @@ from .texts_writer import VacancyWriterModel
 
 # Train 
 from .train_process import train
-from .train_argparser import parse_args
