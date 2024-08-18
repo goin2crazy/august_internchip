@@ -198,7 +198,7 @@ def train(
     if tokenizer_preset == None: 
         tokenizer_preset = cfg.tokenizer_path
 
-    tokenizer = tokenizer = AutoTokenizer.from_pretrained(tokenizer_preset)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_preset)
     tokenizer.pad_token = tokenizer.eos_token
 
     # Build datasets 
@@ -217,7 +217,7 @@ def train(
 
     training_args = cfg.default_train_args
 
-    for k, v in training_args_: 
+    for k, v in training_args_.items(): 
         training_args[k] = v
 
     model = run_train(
