@@ -55,13 +55,13 @@ class TextInput(BaseModel):
 async def extract_features(input: TextInput):
     check_models_loaded()
     features = feat(input.text)
-    return features
+    return str(features)
 
 # Endpoint to extract features from text using Gemini
 @app.post("/extract_features_with_gemini")
 async def extract_features_gemini(input: TextInput):
     features = feat_gemini(input.text)
-    return features
+    return str(features)
 
 # Endpoint to call Gemini model
 @app.post("/call_gemini")
