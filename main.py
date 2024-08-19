@@ -6,8 +6,6 @@ from pydantic import BaseModel
 import numpy as np 
 from sentence_transformers import util
 
-# configs 
-import config as cfg
 from texts_writer import Config as vacancy_write_cfg
 
 # local models 
@@ -41,7 +39,7 @@ model = None
 @app.post("/start_local_models")
 async def start_local_models():
     global feat, model
-    feat = FeatureExtractor(model_path=cfg.model_feat_path, revision=cfg.model_feat_versions)
+    feat = FeatureExtractor()
     model = VacancyWriterModel()
     return {"message": "Local models loaded successfully."}
 
@@ -121,18 +119,6 @@ async def forward_model(request: ForwardRequest):
 class EmbeddingsInput(BaseModel):
     embedding1: List[float]
     embedding2: List[float]
-
-@app.post("/extract_embeddings_of_features")
-async def extract_embeddings_of_features(input: TextInput):
-    check_models_loaded()
-    _, embeddings = feat(input.text, sort)
-    return {"embeddings": embeddings.tolist()}
-
-@app.post("/extract_features_and_embeddings")
-async def extract_features_and_embeddings(input: TextInput):
-    check_models_loaded()
-    features, embeddings = feat(input.text, sort)
-    return {"features": features, "embeddings": embeddings.tolist()}
 
 @app.post("/extract_embeddings")
 async def extract_embeddings(input: TextInput):

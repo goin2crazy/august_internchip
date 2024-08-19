@@ -4,25 +4,7 @@ from typing import Any
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-
-class Config:
-  required_info_keys = ['title', 'salary', 'company', 'experience', 'mode', 'skills']
-
-  model_path = 'doublecringe123/job-describtion-copilot-ru'
-  tokenizer_path = 'cometrain/neurotitle-rugpt3-small'
-
-  model_revision = None
-
-  generation_config = dict(max_new_tokens=5,
-                        do_sample=True,
-                        top_p = 0.97,
-                        top_k = 5,
-                        num_beams=2,
-                        # bad_words_ids = [tokenizer('\n').input_ids],
-                        temperature = 0.4,
-                        repetition_penalty=1.2,
-
-                        no_repeat_ngram_size=2,)
+from .config import Config
 
 class VacancyWriterModel(): 
     def __init__(self): 

@@ -2,7 +2,8 @@ from sentence_transformers import SentenceTransformer
 
 from sentence_transformers import util
 
-import config as cfg
+class cfg: 
+  sentence_sorting_model_preset = 'sentence-transformers/all-MiniLM-L6-v2'
 
 class SortingModel():
 
