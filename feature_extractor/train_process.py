@@ -177,8 +177,13 @@ def train(
             )
     """
     # Load data
-        
-    df = pd.read_parquet(dataframe_path)
+    
+    if dataframe_path.endswith("parquet"): 
+	df = pd.read_parquet(dataframe_path)
+    elif dataframe_path.endswith("csv"): 
+	df = pd.read_csv(dataframe_path)
+    else:
+	print("unrecognized file type")     	
     
     assert (("features" in df.columns) and ("description" in df.columns)), "Need DataFrame included the 'features' (label) and 'description' (inputs) columns"
 

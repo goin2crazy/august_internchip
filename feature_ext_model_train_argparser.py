@@ -4,7 +4,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser(description="Train a model using Hugging Face Transformers.")
 
-    parser.add_argument("dataframe_path", type=str, help="Local or Remote path to CSV dataset with ['title', 'salary', 'company', 'experience', 'mode', 'skills', 'description'] columns.")
+    parser.add_argument("--dataframe_path", type=str, help="Local or Remote path to CSV dataset with ['title', 'salary', 'company', 'experience', 'mode', 'skills', 'description'] columns.")
     parser.add_argument("--tokenizer_preset", type=str, default=None, help="Local or Remote path to AutoTokenizer for the model.")
     parser.add_argument("--model_preset", type=str, default=None, help="Local or Remote path to the model.")
     parser.add_argument("--model_revision", type=str, default=None, help="Version of the model to use if remote path is provided.")
