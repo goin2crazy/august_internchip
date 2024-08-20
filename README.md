@@ -3,8 +3,9 @@
 **To train feature extractor model (Example)** 
 
 ```
-! python /kaggle/working/august_internchip/feature_ext_model_train_argparser.py \
---dataframe_path "/kaggle/working/august_internchip/data.csv" --tokenizer_preset 'cointegrated/rut5-base-multitask' \
+! python feature_ext_model_train_argparser.py \
+--dataframe_path "hf://datasets/doublecringe123/parsed-vacancies-from-headhunter-tashkent/data/train-00000-of-00001.parquet" \
+--tokenizer_preset 'cointegrated/rut5-base-multitask' \
 --model_preset 'cointegrated/rut5-base-multitask'\
 --training_args \
 num_train_epochs=1 \
@@ -13,10 +14,20 @@ torch_compile=True \
 auto_find_batch_size=True
 ```
 
+
 **To train vacancy writer model**
 
 ```
-check the file vacancy_writer_train_argparser.py
+! python vacancy_writer_train_argparser.py \
+--dataframe_path "hf://datasets/doublecringe123/parsed-vacancies-from-headhunter-tashkent/data/train-00000-of-00001.parquet"
+--tokenizer_preset "cometrain/neurotitle-rugpt3-small" \
+--model_preset 'doublecringe123/job-describtion-copilot-ru' \
+--training_args
+push_to_hub=True \
+num_train_epochs=1 \
+warmup_steps=50 \
+torch_compile=True \
+auto_find_batch_size=True
 ```
 
 
