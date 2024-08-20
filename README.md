@@ -1,3 +1,25 @@
+# +Train 
+
+**To train feature extractor model (Example)** 
+
+```
+! python /kaggle/working/august_internchip/feature_ext_model_train_argparser.py \
+--dataframe_path "/kaggle/working/august_internchip/data.csv" --tokenizer_preset 'cointegrated/rut5-base-multitask' \
+--model_preset 'cointegrated/rut5-base-multitask'\
+--training_args \
+num_train_epochs=1 \
+warmup_steps=50 \
+torch_compile=True \
+auto_find_batch_size=True
+```
+
+**To train vacancy writer model**
+
+```
+check the file vacancy_writer_train_argparser.py
+```
+
+
 # Gemini API for features extraction and vacancy writing 
 
 Using all my skill in prompting and other stuff i added the Gemini API Usage into folder remote_api_models. There also is the python-baseline.ipynb file where i had tested and runned this code. 

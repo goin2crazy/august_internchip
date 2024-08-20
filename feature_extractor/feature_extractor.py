@@ -27,6 +27,7 @@ class Config():
 
     
     default_train_args = dict(
+        output_dir = model_path.split('/')[-1], 
         push_to_hub=False, 
         # strategies 
         save_strategy="epoch", 

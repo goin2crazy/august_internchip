@@ -114,7 +114,6 @@ def run_train(model:torch.nn.Module,
     collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
     training_args = Seq2SeqTrainingArguments(
-        output_dir = cfg.model_path, 
         **kwargs, 
         fp16 = torch.cuda.is_available(), 
     )
