@@ -177,44 +177,56 @@ def train(
             )
     """
     # Load data
-    
+    print("Loading data...")
     if dataframe_path.endswith("parquet"): 
-	df = pd.read_parquet(dataframe_path)
+        df = pd.read_parquet(dataframe_path)
     elif dataframe_path.endswith("csv"): 
-	df = pd.read_csv(dataframe_path)
+        df = pd.read_csv(dataframe_path)
     else:
-	print("unrecognized file type")     	
+        print("Unrecognized file type")
+        return None
+    
+    print("Data loaded successfully.")
     
     assert (("features" in df.columns) and ("description" in df.columns)), "Need DataFrame included the 'features' (label) and 'description' (inputs) columns"
-
     df = df[['features', 'description']]
+    
     # Load tokenizer 
+    print("Loading tokenizer...")
     if tokenizer_preset == None: 
         tokenizer_preset = cfg.tokenizer_path
-
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_preset)
     tokenizer.pad_token = tokenizer.eos_token
-
+    print("Tokenizer loaded successfully.")
+    
     # Build datasets 
+    print("Building datasets...")
     if validation_split: 
         ds_train, ds_val = build_data(df, tokenizer=tokenizer)
+        print("Training and validation datasets built.")
     else: 
         ds_train, _ = build_data(df, split_size = 0.0, tokenizer=tokenizer)
         ds_val = None 
-
-
+        print("Training dataset built without validation split.")
+    
     # Load model 
+    print("Loading model...")
     if model_preset == None: 
         model_preset = cfg.model_path
     if model_revision == None: 
         model_revision = cfg.model_revision 
     model = AutoModelForSeq2SeqLM.from_pretrained(model_preset, revision = model_revision)
-
+    print("Model loaded successfully.")
+    
+    # Update training arguments
+    print("Updating training arguments...")
     training_args = cfg.default_train_args
-
     for k, v in training_args_.items(): 
         training_args[k] = v
-
+    print("Training arguments updated.")
+    
+    # Train the model
+    print("Starting training...")
     model = run_train(
         model = model, 
         tokenizer = tokenizer, 
@@ -223,4 +235,6 @@ def train(
         metrics=metrics, 
         **training_args, 
     )
+    print("Training complete.")
+    
     return model
