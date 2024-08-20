@@ -19,8 +19,8 @@ from sklearn.model_selection import train_test_split
 import pandas as pd 
 import numpy as np
 
-import nltk
-import evaluate 
+# import nltk
+# import evaluate 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # there load evaluate rouge metric
@@ -30,23 +30,23 @@ from .feature_extractor import Config as cfg
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-nltk.download("punkt", quiet=True)
-metric = evaluate.load("rouge")
+# nltk.download("punkt", quiet=True)
+# metric = evaluate.load("rouge")
 
-def get_metrics(tokenizer): 
-    def compute_metrics(eval_preds):
-        preds, labels = eval_preds
-        # decode preds and labels
-        labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
-        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
-        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-        # rougeLSum expects newline after each sentence
-        decoded_preds = ["\n".join(nltk.sent_tokenize(pred.strip())) for pred in decoded_preds]
-        decoded_labels = ["\n".join(nltk.sent_tokenize(label.strip())) for label in decoded_labels]
-        result = metric.compute(predictions=decoded_preds, references=decoded_labels, use_stemmer=True)
+# def get_metrics(tokenizer): 
+#     def compute_metrics(eval_preds):
+#         preds, labels = eval_preds
+#         # decode preds and labels
+#         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+#         decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+#         decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+#         # rougeLSum expects newline after each sentence
+#         decoded_preds = ["\n".join(nltk.sent_tokenize(pred.strip())) for pred in decoded_preds]
+#         decoded_labels = ["\n".join(nltk.sent_tokenize(label.strip())) for label in decoded_labels]
+#         result = metric.compute(predictions=decoded_preds, references=decoded_labels, use_stemmer=True)
         
-        return result
-    return compute_metrics
+#         return result
+#     return compute_metrics
 
 def tokenize(item, tokenizer): 
     return {
@@ -126,7 +126,7 @@ def run_train(model:torch.nn.Module,
         train_dataset = ds_train, 
         eval_dataset = ds_val, 
         data_collator = collator, 
-        compute_metrics=get_metrics(tokenizer) if metrics else None, 
+        # compute_metrics=get_metrics(tokenizer) if metrics else None, 
     )
 
     trainer.train()
@@ -235,6 +235,12 @@ def train(
         metrics=metrics, 
         **training_args, 
     )
+
     print("Training complete.")
     
+    # Save model in hf hub 
+    print("Start saving...")
+    tokenizer.push_to_hub(cfg.model_path, commit_message=f'tokenizer of {model_preset}')
+    model.push_to_hub(cfg.model_path, commit_message=f'trained {model_preset}({tokenizer_preset}) on dataset {dataframe_path}')
+
     return model

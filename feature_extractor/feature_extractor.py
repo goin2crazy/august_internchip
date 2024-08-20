@@ -14,14 +14,29 @@ class Config():
 
     max_length = 768
 
+    default_generation_config = dict(max_length=768, 
+                        do_sample=True,
+                        top_p = 0.97,
+                        top_k = 5,
+                        num_beams=2,
+                        # bad_words_ids = [tokenizer('\n').input_ids],
+                        temperature = 0.4,
+                        repetition_penalty=1.2,
+
+                        no_repeat_ngram_size=2,)
+
+    
     default_train_args = dict(
-        push_to_hub=True, 
+        push_to_hub=False, 
         # strategies 
         save_strategy="epoch", 
         eval_strategy="epoch", 
         
         # batch size 
-        auto_find_batch_size=True, 
+        per_device_train_batch_size=2,
+        per_device_eval_batch_size=2,
+        logging_strategy = 'epoch', 
+        
         num_train_epochs=1,
         
         # optimizer 
@@ -29,7 +44,8 @@ class Config():
         learning_rate=5e-4, 
         warmup_steps=100, 
         
-        save_total_limit=1, 
+        save_total_limit=1,
+        load_best_model_at_end=True, 
         seed=42, 
     )
 
@@ -67,7 +83,7 @@ class FeatureExtractor():
 
         # Generate features using the model
         with torch.no_grad():
-            outputs = self.model.generate(**inputs)
+            outputs = self.model.generate(**inputs, **Config.default_generation_config)
 
         # Decode the generated tokens to text
         features = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
