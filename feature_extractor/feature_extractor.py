@@ -49,34 +49,37 @@ class Config():
         load_best_model_at_end=True, 
         seed=42, 
     )
-
 class FeatureExtractor():
-    def __init__(self):
+    def __init__(self, config=None):
+        if config==None: 
+            config = Config()
+    
         # Load tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(
-            Config.tokenizer_path,
-            revision=Config.model_revision
+            config.tokenizer_path,
+            revision=config.model_revision
         )
 
         # Check if CUDA (GPU) is available and decide on the precision
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.int8
+        torch_dtype = torch.int8 if torch.cuda.is_available() else torch.float16
 
         # Load the model
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
-            Config.model_path,
-            revision=Config.model_revision,
+            config.model_path,
+            revision=config.model_revision,
             torch_dtype=torch_dtype,
             device_map='auto'
         ).to(device)
 
         self.device = device
+        self.config = config
 
     def __call__(self, inputs): 
         # Tokenize the inputs
         inputs = self.tokenizer(
             inputs, 
-            max_length=Config.max_length, 
+            max_length=self.config.max_length, 
             truncation=True, 
             padding='longest', 
             return_tensors="pt"
@@ -84,13 +87,12 @@ class FeatureExtractor():
 
         # Generate features using the model
         with torch.no_grad():
-            outputs = self.model.generate(**inputs, **Config.default_generation_config)
+            outputs = self.model.generate(**inputs, **self.config.default_generation_config)
 
         # Decode the generated tokens to text
         features = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         
         return features
-
 # Example usage:
 # extractor = FeatureExtractor()
 # features = extractor("Your input text here")
