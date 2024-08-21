@@ -1,0 +1,9 @@
+transformers 
+google-generativeai
+
+datasets==2.18.0
+peft 
+sentence-transformers
+
+uvicorn
+fastapi 
