@@ -60,7 +60,8 @@ class FeatureExtractor():
 
         # Check if CUDA (GPU) is available and decide on the precision
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        torch_type = torch.int8 if torch.cuda.is_available() else torch.float16
+        # torch_type = torch.int8 if torch.cuda.is_available() else torch.float16
+        torch_type = torch.float16
 
         # Load the model
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
