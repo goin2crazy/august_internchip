@@ -60,19 +60,19 @@ class FeatureExtractor():
 
         # Check if CUDA (GPU) is available and decide on the precision
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.int8
+        torch_type = torch.int8 if torch.cuda.is_available() else torch.float16
 
         # Load the model
         self.model = AutoModelForSeq2SeqLM.from_pretrained(
             Config.model_path,
             revision=Config.model_revision,
-            torch_dtype=torch_dtype,
+            torch_dtype=torch_type,
             device_map='auto'
         ).to(device)
 
         self.device = device
 
-    def __call__(self, inputs): 
+    def __call__(self, inputs, generation_config=None): 
         # Tokenize the inputs
         inputs = self.tokenizer(
             inputs, 
@@ -82,9 +82,12 @@ class FeatureExtractor():
             return_tensors="pt"
         ).to(self.device)
 
+        # Use default or provided generation config
+        gen_config = generation_config if generation_config else Config.default_generation_config
+
         # Generate features using the model
         with torch.no_grad():
-            outputs = self.model.generate(**inputs, **Config.default_generation_config)
+            outputs = self.model.generate(**inputs, **gen_config)
 
         # Decode the generated tokens to text
         features = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
