@@ -107,3 +107,8 @@ def train_text2text_feature_extractor_model(request: Text2TextFeatureExtractorTr
         return {"message": "Text2Text Feature Extractor Model training started successfully."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# Run the application
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=8001)
