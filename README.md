@@ -1,4 +1,145 @@
-# +Train 
+# train_api
+
+**There is some important enviroment variables u need to set**
+
+```Linux Ubuntu Terminal 
+export "GEMINI_API_KEY"="YOUR GEMINI API KEY"
+export "HF_TOKEN"="YOU HUGGING FACE AUTHORIZATED ACCOUNT API TOKEN" 
+```
+
+```Windows cmd 
+set "GEMINI_API_KEY"="YOUR GEMINI API KEY"
+set "HF_TOKEN"="YOU HUGGING FACE AUTHORIZATED ACCOUNT API TOKEN" 
+```
+Here's an example of how you could write the instructions in the README file for your colleagues, guiding them on how to use the FastAPI service and explaining the recent changes related to resolving the Pydantic warning:
+
+## Getting Started
+
+Ensure you have the following installed:
+
+- Python 3.10 or above
+- Pip (Python package installer)
+- Git
+
+### Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://your-repository-url.git
+    cd your-repository-directory
+    ```
+
+2. Create a virtual environment and activate it:
+
+    ```bash
+    python -m venv env
+    source env/bin/activate  # On Windows: env\Scripts\activate
+    ```
+
+3. Install the required dependencies:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### Running the FastAPI Application
+
+To start the FastAPI server, run:
+
+```bash
+uvicorn main:app --reload
+```
+
+This will start the server locally on `http://127.0.0.1:8000`.
+
+## API Endpoints
+
+### 1. Train Vacancy Writer Model
+
+**Endpoint:** `/train-vacancy-writer`
+
+**Method:** `POST`
+
+This endpoint is used to initiate the training of the vacancy writer model. Below is the expected request body:
+
+**Request Body:**
+
+```json
+{
+    "dataframe": {
+        "column1": ["value1", "value2"],
+        "column2": ["value3", "value4"]
+    },
+    "dataframe_path": "path/to/data.parquet",
+    "tokenizer_preset": "cometrain/neurotitle-rugpt3-small",
+    "model_preset": "doublecringe123/job-describtion-copilot-ru",
+    "model_revision": null,
+    "validation_split": true,
+    "block_size": 256,
+    "training_args_": {
+        "push_to_hub": true,
+        "num_train_epochs": 1,
+        "warmup_steps": 50,
+        "torch_compile": true,
+        "auto_find_batch_size": true
+    }
+}
+```
+
+**Response:**
+
+- **Success:** `200 OK` with a message indicating the training has started.
+- **Failure:** `500 Internal Server Error` with a detailed error message.
+
+### 2. Train Text2Text Feature Extractor Model
+
+**Endpoint:** `/train-text2text-feature-extractor`
+
+**Method:** `POST`
+
+This endpoint is used to initiate the training of the text-to-text feature extractor model. Below is the expected request body:
+
+**Request Body:**
+
+```json
+{
+    "dataframe": {
+        "column1": ["value1", "value2"],
+        "column2": ["value3", "value4"]
+    },
+    "dataframe_path": "path/to/data.parquet",
+    "tokenizer_preset": "cointegrated/rut5-base-multitask",
+    "model_preset": "cointegrated/rut5-base-multitask",
+    "model_revision": null,
+    "validation_split": true,
+    "metrics": true,
+    "training_args_": {
+        "push_to_hub": true,
+        "num_train_epochs": 1,
+        "warmup_steps": 50,
+        "torch_compile": true,
+        "auto_find_batch_size": true
+    }
+}
+```
+
+**Response:**
+
+- **Success:** `200 OK` with a message indicating the training has started.
+- **Failure:** `500 Internal Server Error` with a detailed error message.
+
+### Handling Protected Namespace Conflicts
+
+We encountered warnings related to the conflict between certain field names (`model_preset`, `model_revision`) and Pydantic's protected namespace `model_`. To resolve this, the `protected_namespaces` configuration has been explicitly disabled in the Pydantic model configurations. This change is included in the `Config` class of each `BaseModel`:
+
+```python
+class Config:
+    protected_namespaces = ()  # Disable protected namespaces
+```
+
+This ensures that the warnings are suppressed, allowing us to continue using field names like `model_preset` and `model_revision` without issues.
+
 
 **To train feature extractor model (Example)** 
 
