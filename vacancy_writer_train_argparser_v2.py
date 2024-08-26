@@ -6,8 +6,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Train a model with specified parameters.")
 
     # Define arguments
-    parser.add_argument('--tokenizer_preset', type=str, required=True, help="Local or Remote path to AutoTokenizer.")
-    parser.add_argument('--model_preset', type=str, required=True, help="Local or Remote path to model.")
+    parser.add_argument('--tokenizer_preset', type=str, default=None, required=False, help="Local or Remote path to AutoTokenizer.")
+    parser.add_argument('--model_preset', type=str, default=None, required=False, help="Local or Remote path to model.")
     parser.add_argument('--model_revision', type=str, default=None, help="Version of the model (if using remote path).")
 
     # Additional arguments to be passed as training_args
