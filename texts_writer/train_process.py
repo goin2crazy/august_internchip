@@ -180,6 +180,8 @@ def train(
     print("WARNING! Dataframe must include the columns ['title', 'salary', 'company', 'experience', 'mode', 'skills', 'description']")
     df = df[['title', 'salary', 'company', 'experience', 'mode', 'skills', 'description']]
     print("Dataframe columns selected.")
+    print(df.head())
+
 
     # Load tokenizer 
     if tokenizer_preset is None: 

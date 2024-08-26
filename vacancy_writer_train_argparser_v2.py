@@ -53,8 +53,8 @@ def parse_args():
 
     training_args['num_train_epochs'] = 2 
                 # optimizer 
-    training_args['weight_decay'] = 1e-4, 
-    training_args['learning_rate'] = 6e-4, 
+    training_args['weight_decay'] = 1e-4 
+    training_args['learning_rate'] = 6e-4
 
     # Call the train function with parsed arguments
     train(
