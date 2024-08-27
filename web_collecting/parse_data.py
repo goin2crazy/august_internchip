@@ -70,7 +70,7 @@ class scrape_pages():
         pages = list(set(pages))
         print(f"Collected {len(pages)} pages")
         
-        if len(pages) >= 100: 
+        if len(pages): 
             all_links = list() 
             for p in pages: 
                 vacancies = self.collect_links(p)
@@ -79,8 +79,13 @@ class scrape_pages():
             self.urls = list(set(all_links))
             print(f"Collected total {len(self.urls)} vacancy links across multiple pages")
             return self.urls
-        elif len(pages) < 100: 
-            self.collect_daily(url)
+        else: 
+            all_links = self.collect_links(url)
+            self.urls = list(set(all_links))
+            
+        if len(self.urls) < 100: 
+          self.collect_daily(url)
+        
 
     def __init__(self, urls = [], verbose=0):
         self.verbose= verbose
