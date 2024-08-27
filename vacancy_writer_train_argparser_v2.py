@@ -68,3 +68,16 @@ def parse_args():
 
 if __name__ == "__main__":
     parse_args()
+
+
+# Example run
+# ! git clone https://github.com/goin2crazy/august_internchip/
+# %cd /content/august_internchip
+# ! git checkout daily-update
+# ! pip install -q -r requirements.txt
+
+# from google.colab import userdata
+# import os 
+# os.environ["HF_TOKEN"] = userdata.get('HF_TOKEN')
+
+# ! python /content/august_internchip/vacancy_writer_train_argparser_v2.py --training_args push_to_hub=False

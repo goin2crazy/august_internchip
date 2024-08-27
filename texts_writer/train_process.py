@@ -86,7 +86,7 @@ def build_data(df, *args, **kwargs):
 def run_train(model:torch.nn.Module, 
               tokenizer: AutoTokenizer, 
               ds_train: datasets.Dataset, 
-              ds_val: datasets.Dataset, 
+              ds_val: datasets.Dataset = None , 
               **kwargs) -> torch.nn.Module: 
     """
 
@@ -137,7 +137,7 @@ def run_train(model:torch.nn.Module,
         eval_dataset = ds_val, 
         data_collator = collator, 
     #     compute_metrics=compute_metrics, 
-    )
+        ) 
 
     trainer.train()
     return model
@@ -197,8 +197,8 @@ def train(
         ds_train, ds_val = build_data(df, tokenizer, block_size)
         print("Datasets for training and validation created.")
     else: 
+        _, ds_val = build_data(df, tokenizer, block_size)
         ds_train = build_dataset_all(df, tokenizer, block_size)
-        ds_val = None
         print("Dataset for training created.")
 
     # Load model 
