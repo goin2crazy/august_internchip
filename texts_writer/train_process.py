@@ -125,7 +125,7 @@ def run_train(model:torch.nn.Module,
     collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
     training_args = TrainingArguments(
-        output_dir = cfg.model_path, 
+        output_dir = cfg.model_path.split('/')[-1], 
         **kwargs, 
         fp16 = torch.cuda.is_available(), 
     )

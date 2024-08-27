@@ -50,7 +50,7 @@ class scrape_pages():
         vacancies_links = [i for i in all_links if (self.base_url in i) and ('/vacancy/' in i)]
         print(f"Collected {len(vacancies_links)} vacancy links")
         return vacancies_links
-
+    
     def collect_daily(self, url = 'https://tashkent.hh.uz/vacancies/za_poslednie_tri_dnya'): 
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -63,14 +63,14 @@ class scrape_pages():
             print(f"Error while collecting daily vacancies: {e}")
             return []
         
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.text, 'html.parser')
         all_links = [self.correct_link(link.get('href')) for link in soup.find_all('a') if type(link.get('href')) == str]
 
         pages = [i for i in all_links if '/vacancies/za_poslednie_tri_dnya?page' in i]
         pages = list(set(pages))
         print(f"Collected {len(pages)} pages")
         
-        if len(pages): 
+        if len(pages) >= 100: 
             all_links = list() 
             for p in pages: 
                 vacancies = self.collect_links(p)
@@ -79,10 +79,8 @@ class scrape_pages():
             self.urls = list(set(all_links))
             print(f"Collected total {len(self.urls)} vacancy links across multiple pages")
             return self.urls
-        else: 
-            self.urls = self.collect_links(url)
-            print(f"Collected total {len(self.urls)} vacancy links")
-            return self.urls
+        elif len(pages) < 100: 
+            self.collect_daily(url)
 
     def __init__(self, urls = [], verbose=0):
         self.verbose= verbose
