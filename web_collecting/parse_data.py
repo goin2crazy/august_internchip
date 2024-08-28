@@ -14,11 +14,33 @@ from .filters import filter_by_language, fix_descrition
 
 assert "HF_TOKEN" in os.environ, "Please set your HF_TOKEN to environment variables"
 
+try: 
+    from selenium import webdriver
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.common.by import By
+    
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.headless = True
+except: 
+    print("Damn, install selenium bro")
+          
+driver = None
+
 tqdm.pandas()
 
-def get_html(url, mode='regular'):
+def get_html(url, mode='regular', wait_time=5):
+    if mode == 'selenium':
+        driver.get(url)
+        WebDriverWait(driver, wait_time).until(
+            EC.presence_of_element_located((By.TAG_NAME, "body"))
+        )
+        page_html = driver.page_source
+        return page_html
 
-    if mode == 'regular':
+    elif mode =='regular': 
         try:
             headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -28,7 +50,6 @@ def get_html(url, mode='regular'):
         except Exception as e:
             print(f"Error fetching URL {url}: {e}")
             return None
-    # Future modes can be added here with elif blocks
 
 class scrape_pages():
     base_url = "https://tashkent.hh.uz/"
@@ -38,10 +59,10 @@ class scrape_pages():
             link_to_correct = self.base_url + link_to_correct.lstrip('/')
         return link_to_correct
 
-    def collect_links(self, url, mode): 
+    def collect_links(self, url, mode, selenium_waittime): 
         print(f"Collecting links from: {url}")
 
-        content = get_html(url, mode)
+        content = get_html(url, mode, wait_time=selenium_waittime)
         if content is None:
             return []
 
@@ -53,10 +74,13 @@ class scrape_pages():
         print(f"Collected {len(vacancies_links)} vacancy links")
         return vacancies_links
     
-    def collect_daily(self, url='https://tashkent.hh.uz/vacancies/za_poslednie_tri_dnya', mode='regular'): 
+    def collect_daily(self, url='https://tashkent.hh.uz/vacancies/za_poslednie_tri_dnya', mode='regular', selenium_waittime=5): 
+        global driver
+        driver = webdriver.Chrome(options=chrome_options)
+
         print(f"Collecting daily vacancies from: {url}")
 
-        content = get_html(url, mode)
+        content = get_html(url, mode, wait_time=selenium_waittime)
         if content is None:
             return []
         
@@ -70,18 +94,20 @@ class scrape_pages():
         if len(pages): 
             all_links = list() 
             for p in pages: 
-                vacancies = self.collect_links(p, mode)
+                vacancies = self.collect_links(p, mode, selenium_waittime=selenium_waittime)
                 all_links.extend(vacancies)
                 
             self.urls = list(set(all_links))
             print(f"Collected total {len(self.urls)} vacancy links across multiple pages")
             return self.urls
         else: 
-            all_links = self.collect_links(url, mode)
+            all_links = self.collect_links(url, mode, selenium_waittime=selenium_waittime)
             self.urls = list(set(all_links))
             
         if len(self.urls) < 100: 
-            self.collect_daily(url, mode)
+            self.collect_daily(url, mode, selenium_waittime=selenium_waittime)
+
+        driver.quit() 
         
 
     def __init__(self, urls=[], verbose=0, mode='regular'):
@@ -148,10 +174,10 @@ class scrape_pages():
         return len(self.urls)
 
 
-def run(save_folder='', collector_verbose=0, hub_path='doublecringe123/parsed-hh-last-tree-days-collection', mode='regular'): 
+def run(save_folder='', collector_verbose=0, hub_path='doublecringe123/parsed-hh-last-tree-days-collection', mode='regular', selenium_waittime=5): 
 
     p = scrape_pages(verbose=collector_verbose, mode=mode)
-    p.collect_daily(mode=mode)
+    p.collect_daily(mode=mode, selenium_waittime=selenium_waittime)
 
     collected_dict = {
         'title': list(),
