@@ -32,6 +32,7 @@ driver = None
 tqdm.pandas()
 
 def get_html(url, mode='regular', wait_time=5):
+    global driver
     if mode == 'selenium':
         driver.get(url)
         WebDriverWait(driver, wait_time).until(
