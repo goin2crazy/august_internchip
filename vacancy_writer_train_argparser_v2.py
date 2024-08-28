@@ -3,17 +3,17 @@ from texts_writer import train
 from web_collecting.parse_data import run
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train a model with specified parameters.")
+    parser = argparse.ArgumentParser(description="Train a model with specified parameters and collect data using a web scraper.")
 
-    # Define arguments
+    # Define arguments for the training function
     parser.add_argument('--tokenizer_preset', type=str, default=None, required=False, help="Local or Remote path to AutoTokenizer.")
-    parser.add_argument('--model_preset', type=str, default=None, required=False, help="Local or Remote path to model.")
+    parser.add_argument('--model_preset', type=str, default=None, required=False, help="Local or Remote path to the model.")
     parser.add_argument('--model_revision', type=str, default=None, help="Version of the model (if using remote path).")
 
     # Additional arguments to be passed as training_args
     parser.add_argument('--training_args', nargs='*', help="Additional training arguments in key=value format.")
 
-        
+    # Arguments for the web scraper (data collection)
     parser.add_argument(
         '--collecting-save-folder',
         type=str,
@@ -34,15 +34,32 @@ def parse_args():
         default='doublecringe123/parsed-hh-last-tree-days-collection',
         help='Path to the Hugging Face hub where the dataset will be pushed.'
     )
+    
+    parser.add_argument(
+        '--collecting-mode',
+        type=str,
+        default='regular',
+        choices=['regular', 'selenium'],
+        help="Mode of web scraping: 'regular' for requests or 'selenium' for Selenium-based scraping."
+    )
 
+    parser.add_argument(
+        '--collecting-selenium-waittime',
+        type=int,
+        default=5,
+        help="Wait time for Selenium to wait for the page to load (only used if mode is 'selenium')."
+    )
 
     # Parse arguments
     args = parser.parse_args()
 
-    data_path =  run(
+    # Run the web scraper with the provided arguments
+    data_path = run(
         save_folder=args.collecting_save_folder,
         collector_verbose=args.collecting_collector_verbose,
-        hub_path=args.collecting_hub_path
+        hub_path=args.collecting_hub_path,
+        mode=args.collecting_mode,
+        selenium_waittime=args.collecting_selenium_waittime
     )
 
     # Convert training_args to dictionary
@@ -51,8 +68,8 @@ def parse_args():
     else:
         training_args = {}
 
+    # Add default training arguments
     training_args['num_train_epochs'] = 2 
-                # optimizer 
     training_args['weight_decay'] = 1e-4 
     training_args['learning_rate'] = 6e-4
 
@@ -68,16 +85,3 @@ def parse_args():
 
 if __name__ == "__main__":
     parse_args()
-
-
-# Example run
-# ! git clone https://github.com/goin2crazy/august_internchip/
-# %cd /content/august_internchip
-# ! git checkout daily-update
-# ! pip install -q -r requirements.txt
-
-# from google.colab import userdata
-# import os 
-# os.environ["HF_TOKEN"] = userdata.get('HF_TOKEN')
-
-# ! python /content/august_internchip/vacancy_writer_train_argparser_v2.py --training_args push_to_hub=False
