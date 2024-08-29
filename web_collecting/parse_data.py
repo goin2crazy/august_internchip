@@ -35,7 +35,7 @@ def get_html(url, mode='regular', wait_time=5):
     global driver
     if mode == 'selenium':
         driver.get(url)
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);") 
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight*50);") 
         WebDriverWait(driver, wait_time).until(
             EC.presence_of_element_located((By.TAG_NAME, "body"))
         )
