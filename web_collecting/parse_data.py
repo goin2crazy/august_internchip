@@ -34,13 +34,16 @@ tqdm.pandas()
 def get_html(url, mode='regular', wait_time=5):
     global driver
     if mode == 'selenium':
-        driver.get(url)
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight*50);") 
-        WebDriverWait(driver, wait_time).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
-        page_html = driver.page_source
-        return page_html
+        try: 
+            driver.get(url)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight*50);") 
+            WebDriverWait(driver, wait_time).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+            page_html = driver.page_source
+            return page_html
+        except: 
+            return ""
 
     elif mode =='regular': 
         try:
@@ -51,7 +54,7 @@ def get_html(url, mode='regular', wait_time=5):
             return response.content
         except Exception as e:
             print(f"Error fetching URL {url}: {e}")
-            return None
+            return ""
 
 class scrape_pages():
     base_url = "https://tashkent.hh.uz/"
