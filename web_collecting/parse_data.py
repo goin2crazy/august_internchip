@@ -104,9 +104,10 @@ class scrape_pages():
         else: 
             all_links = self.collect_links(url, mode, selenium_waittime=selenium_waittime)
             self.urls = list(set(all_links))
-            
-        if len(self.urls) < 100: 
-            self.collect_daily(url, mode, selenium_waittime=selenium_waittime)
+
+        if mode == 'regular': 
+            if len(self.urls) < 50: 
+                self.collect_daily(url, mode, selenium_waittime=selenium_waittime)
 
         driver.quit() 
         
