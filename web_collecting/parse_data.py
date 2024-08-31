@@ -9,7 +9,6 @@ from tqdm.notebook import tqdm
 import pandas as pd 
 import datasets
 import argparse
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 from .filters import filter_by_language, fix_descrition
 
@@ -31,6 +30,33 @@ except:
 driver = None
 
 tqdm.pandas()
+
+import re
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+def complete_page_links(pages):
+    if not pages:
+        return []
+
+    # Extract base URL and query parameters
+    parsed_url = urlparse(pages[0])
+    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+    query_params = parse_qs(parsed_url.query)
+
+    # Find min and max page numbers
+    page_numbers = [int(parse_qs(urlparse(page).query).get('page', [0])[0]) for page in pages]
+    min_page = min(page_numbers)
+    max_page = max(page_numbers)
+
+    # Generate all page links
+    complete_pages = []
+    for page_num in range(min_page, max_page + 1):
+        query_params['page'] = [str(page_num)]
+        query_string = urlencode(query_params, doseq=True)
+        complete_url = urlunparse(parsed_url._replace(query=query_string))
+        complete_pages.append(complete_url)
+
+    return complete_pages
 
 def get_html(url, mode='regular', wait_time=5):
     global driver
@@ -96,21 +122,7 @@ class scrape_pages():
         pages = [i for i in all_links if ('/vacancies/' in i) and ('page' in i)]
         pages = list(set(pages))
 
-        
-        # Find min and max page numbers
-        page_numbers = [int(parse_qs(urlparse(page).query).get('page', [0])[0]) for page in pages]
-        min_page = min(page_numbers)
-        max_page = max(page_numbers)
-    
-        # Generate all page links
-        complete_pages = []
-        for page_num in range(min_page, max_page + 1):
-            query_params['page'] = [str(page_num)]
-            query_string = urlencode(query_params, doseq=True)
-            complete_url = urlunparse(parsed_url._replace(query=query_string))
-            complete_pages.append(complete_url)
-
-        pages = complete_pages
+        pages = complete_page_links(pages)
         print(f"Collected {len(pages)} pages")
         
         if len(pages): 
