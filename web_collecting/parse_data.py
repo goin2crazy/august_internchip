@@ -108,7 +108,6 @@ class scrape_pages():
     
     def collect_daily(self, url='https://tashkent.hh.uz/vacancies/za_poslednie_tri_dnya', mode='regular', selenium_waittime=5): 
         global driver
-        driver = webdriver.Chrome(options=chrome_options)
 
         print(f"Collecting daily vacancies from: {url}")
 
@@ -142,14 +141,25 @@ class scrape_pages():
             if len(self.urls) < 50: 
                 self.collect_daily(url, mode, selenium_waittime=selenium_waittime)
 
-        driver.quit() 
         
-
+    def disactivate_selenium(self): 
+        global driver
+        driver.quit() 
+    
+    def activate_selenium(self): 
+        global driver
+        driver = webdriver.Chrome(options=chrome_options)
+        
     def __init__(self, urls=[], verbose=0, mode='regular'):
         self.verbose = verbose
+            
         self.urls = urls
         self.mode = mode
         print(f"Initialized with {len(urls)} URLs")
+
+        if mode =='selenium': 
+            self.activate_selenium() 
+
 
     def __getitem__(self, idx):
         url = self.urls[idx]
