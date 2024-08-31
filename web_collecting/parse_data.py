@@ -119,7 +119,7 @@ class scrape_pages():
         soup = BeautifulSoup(content, 'html.parser')
         all_links = [self.correct_link(link.get('href')) for link in soup.find_all('a') if type(link.get('href')) == str]
 
-        pages = [i for i in all_links if ('/vacancies' in i) and ('page' in i)]
+        pages = [i for i in all_links if ('/vacanc' in i) and ('page' in i)]
         pages = list(set(pages))
 
         pages = complete_page_links(pages)
