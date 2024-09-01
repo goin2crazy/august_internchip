@@ -150,11 +150,12 @@ class scrape_pages():
         global driver
         driver = webdriver.Chrome(options=chrome_options)
         
-    def __init__(self, urls=[], verbose=0, mode='regular'):
+    def __init__(self, urls=[], verbose=0, mode='regular', waittime=2):
         self.verbose = verbose
             
         self.urls = urls
         self.mode = mode
+        self.wait = waittime 
         print(f"Initialized with {len(urls)} URLs")
 
         if mode =='selenium': 
@@ -165,7 +166,7 @@ class scrape_pages():
         url = self.urls[idx]
         print(f"Scraping data from: {url}")
 
-        content = get_html(url, self.mode)
+        content = get_html(url, self.mode, wait_time=self.wait)
         if content is None:
             return None
 
