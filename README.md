@@ -85,12 +85,12 @@ You can now access the API at `http://127.0.0.1:8000`.
    Example: 
 
    ```python
-    {'result': '{"Core Responsibilities": ["N/A"],
+    {'result': '''{"Core Responsibilities": ["N/A"],
               "Required Skills": ["N/A"],
               "Educational Requirements": ["N/A"],
               "Experience Level": ["N/A"],
               "Preferred Qualifications": ["N/A"],
-              "Compensation and Benefits": ["N/A"]\}'}
+              "Compensation and Benefits": ["N/A"]\}'''}
   ```
   as str
 
