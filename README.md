@@ -82,9 +82,20 @@ You can now access the API at `http://127.0.0.1:8000`.
    }
    ```
    **Response**: Returns the extracted features as a string.
+   Example: 
 
-### 2. **Call Gemini Model**  
-   **Endpoint**: `/call_gemini`  
+   ```python
+    {'result': '{"Core Responsibilities": ["N/A"],
+              "Required Skills": ["N/A"],
+              "Educational Requirements": ["N/A"],
+              "Experience Level": ["N/A"],
+              "Preferred Qualifications": ["N/A"],
+              "Compensation and Benefits": ["N/A"]\}'}
+  ```
+  as str
+
+### 2. **Direct Call Gemini Model**  
+   **Endpoint**: `/call_gemini_directly`  
    **Method**: `POST`  
    **Description**: Calls the Gemini model to generate a response based on the input text.  
    **Request Body**:
@@ -94,6 +105,7 @@ You can now access the API at `http://127.0.0.1:8000`.
    }
    ```
    **Response**: Returns the model's output.
+   Example: `{'result': [GENERATED ANSWER] }`
 
 ### 3. **Generate Vacancy Text**  
    **Endpoint**: `/call_gemini_write_vacancy/`  
@@ -113,10 +125,10 @@ You can now access the API at `http://127.0.0.1:8000`.
      "input_text": "Any additional input text"
    }
    ```
-   **Response**: Returns the generated vacancy description.
+   **Response**: Returns the generated vacancy description like `{"result": "GENERATED VACANCY DESCRIPTION"}`
 
 ### 4. **Detect Discrimination in Vacancy Text**  
-   **Endpoint**: `/detect_discrimination/`  
+   **Endpoint**: `/detect_discrimination_with_gemini/`  
    **Method**: `POST`  
    **Description**: Detects if a vacancy text contains discriminatory content using the Gemini discrimination filter model.  
    **Request Body**:
@@ -129,6 +141,7 @@ You can now access the API at `http://127.0.0.1:8000`.
    - `reasoning`: A detailed reasoning about whether discrimination was detected.
    - `summarized_reasoning`: A short summary of the discrimination detection.
    - `answer`: Either `<warning>` if discrimination was found, or `<fine>` if the text is acceptable.
+   - `warning`: True if answer is`<warning>` else False  
 
 ### 5. **Extract Embeddings**  
    **Endpoint**: `/extract_embeddings`  
