@@ -54,13 +54,13 @@ class ForwardRequest(InferenceRequest):
 @app.post("/extract_features_with_gemini")
 async def extract_features_gemini(input: TextInput):
     features = feat_gemini(input.text)
-    return str(features)
+    return {"result": str(features)} 
 
 # Endpoint to call Gemini model
-@app.post("/call_gemini")
+@app.post("/call_gemini_directly")
 async def gemini(input: TextInput):
     model_output = gemini(input.text)
-    return model_output
+    return {"result": model_output}
 
 
 @app.post("/call_gemini_write_vacancy/")
